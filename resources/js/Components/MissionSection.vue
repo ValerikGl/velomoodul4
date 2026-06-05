@@ -5,7 +5,7 @@ import { Leaf, Zap, Shield } from 'lucide-vue-next'
 <template>
   <section id="mission" class="relative overflow-hidden bg-[#F8FAFC] py-24">
     <img
-  src="/images/home/mission-bg.svg"
+  :src="'/images/home/mission-bg.svg'"
   alt=""
   class="absolute inset-0 mt-20 mx-auto w-[1400px] opacity-20 pointer-events-none"
 />

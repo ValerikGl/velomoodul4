@@ -66,13 +66,13 @@ const features = [
 
         <div class="mt-8 flex gap-3">
           <img
-            src="/images/stores/google-play.webp"
+            :src="'/images/stores/google-play.webp'"
             alt="Google Play"
             class="h-[42px] w-auto sm:h-[54px]"
           />
 
           <img
-            src="/images/stores/app-store.webp"
+            :src="'/images/stores/app-store.webp'"
             alt="App Store"
             class="h-[42px] w-auto sm:h-[54px]"
           />
@@ -82,7 +82,7 @@ const features = [
       <!-- RIGHT -->
       <div class="relative mt-8 flex justify-center lg:mt-0 lg:justify-end">
         <img
-          src="/images/home/app-devices.webp"
+          :src="'/images/home/app-devices.webp'"
           alt="Velo app with vehicles"
           class="w-full max-w-[300px] object-contain sm:max-w-[520px] lg:max-w-[700px]"
         />

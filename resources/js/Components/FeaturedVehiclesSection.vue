@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { RouterLink } from 'vue-router'
+import { Link } from '@inertiajs/vue3'
 
 import {
   ArrowRight,
@@ -13,67 +13,31 @@ import {
   PhoneCall,
 } from 'lucide-vue-next'
 
+const props = defineProps({
+  vehicles: {
+    type: Array,
+    default: () => [],
+  },
+})
+
 const currentIndex = ref(0)
 const direction = ref('next')
 const isAnimating = ref(false)
 const isMobile = ref(false)
 
-const vehicles = [
-  {
-    tag: 'POPULAARNE',
-    name: 'Velo Lite',
-    desc: 'Võimas elektritõukeratas igapäevaseks linnakasutuseks',
-    speed: '25 km/h',
-    range: '50 km',
-    img: '/images/vehicles/velo-lite.webp',
-    imageScale: "scale-[1.3]",
-  },
-  {
-    tag: 'UUS',
-    name: 'Velo Ride',
-    desc: 'Elektrimootoriga linnamopeed pikemateks sõitudeks',
-    speed: '45 km/h',
-    range: '80 km',
-    img: '/images/vehicles/velo-ride.webp',
-    imageScale: "scale-[1.25]",
-  },
-  {
-    tag: 'PREEMIUM',
-    name: 'Velo Urban',
-    desc: 'Kaasaegne elektrijalgratas aktiivseks kasutamiseks',
-    speed: '25 km/h',
-    range: '75 km',
-    img: '/images/vehicles/velo-urban.webp',
-    imageScale: "scale-[1.35]",
-  },
-  {
-    tag: 'UUS',
-    name: 'Velo Pro',
-    desc: 'Kerge elektritõukeratas kiireks linnas liikumiseks',
-    speed: '25 km/h',
-    range: '45 km',
-    img: '/images/vehicles/velo-pro.webp',
-    imageScale: "scale-[1.15]",
-  },
-  {
-    tag: 'COMFORT',
-    name: 'Velo Cruise',
-    desc: 'Dünaamiline mudel kiireks ja aktiivseks linnasõiduks',
-    speed: '30 km/h',
-    range: '60 km',
-    img: '/images/vehicles/velo-cruise.webp',
-    imageScale: "scale-[1.25]",
-  },
-  {
-    tag: 'MAX',
-    name: 'Velo City',
-    desc: 'Kõrge sõiduulatusega mudel pikemateks linnateekondadeks',
-    speed: '35 km/h',
-    range: '90 km',
-    img: '/images/vehicles/velo-city.webp',
-    imageScale: "scale-[1.5]",
-  },
-]
+const featuredVehicles = computed(() => {
+  return props.vehicles.map((vehicle) => ({
+    id: vehicle.id,
+    slug: vehicle.slug,
+    tag: vehicle.type?.toUpperCase() || 'VELO',
+    name: vehicle.name,
+    desc: vehicle.description,
+    speed: vehicle.speed_kmh ? `${vehicle.speed_kmh} km/h` : '25 km/h',
+    range: `${vehicle.range_km} km`,
+    img: vehicle.image ? `/storage/${vehicle.image}` : '/images/vehicles/velo-lite.webp',
+    imageScale: 'scale-[1.2]',
+  }))
+})
 
 const checkScreen = () => {
   isMobile.value = window.innerWidth < 1024
@@ -97,32 +61,38 @@ const unlockAnimation = () => {
 const getStep = () => (isMobile.value ? 1 : 3)
 
 const nextSlide = () => {
-  if (isAnimating.value) return
+  if (isAnimating.value || featuredVehicles.value.length === 0) return
 
   isAnimating.value = true
   direction.value = 'next'
-  currentIndex.value = (currentIndex.value + getStep()) % vehicles.length
+  currentIndex.value = (currentIndex.value + getStep()) % featuredVehicles.value.length
   unlockAnimation()
 }
 
 const prevSlide = () => {
-  if (isAnimating.value) return
+  if (isAnimating.value || featuredVehicles.value.length === 0) return
 
   isAnimating.value = true
   direction.value = 'prev'
-  currentIndex.value = (currentIndex.value - getStep() + vehicles.length) % vehicles.length
+  currentIndex.value =
+    (currentIndex.value - getStep() + featuredVehicles.value.length) %
+    featuredVehicles.value.length
   unlockAnimation()
 }
 
 const visibleVehicles = computed(() => {
+  if (featuredVehicles.value.length === 0) {
+    return []
+  }
+
   if (isMobile.value) {
-    return [vehicles[currentIndex.value]]
+    return [featuredVehicles.value[currentIndex.value]]
   }
 
   return [
-    vehicles[currentIndex.value],
-    vehicles[(currentIndex.value + 1) % vehicles.length],
-    vehicles[(currentIndex.value + 2) % vehicles.length],
+    featuredVehicles.value[currentIndex.value],
+    featuredVehicles.value[(currentIndex.value + 1) % featuredVehicles.value.length],
+    featuredVehicles.value[(currentIndex.value + 2) % featuredVehicles.value.length],
   ]
 })
 </script>
@@ -142,16 +112,19 @@ const visibleVehicles = computed(() => {
           </p>
         </div>
 
-        <RouterLink
-          to="/vehicles"
+        <Link
+          href="/vehicles"
           class="hidden items-center gap-3 rounded-xl bg-[#6D28D9] px-7 py-4 font-bold text-white shadow-md transition hover:bg-[#5B21B6] lg:flex"
         >
           Vaata kõiki sõidukeid
           <ArrowRight :size="20" />
-        </RouterLink>
+        </Link>
       </div>
 
-      <div class="relative mt-12 overflow-visible px-4 py-4 sm:px-10 lg:mt-16 lg:px-14">
+      <div
+        v-if="visibleVehicles.length"
+        class="relative mt-12 overflow-visible px-4 py-4 sm:px-10 lg:mt-16 lg:px-14"
+      >
         <button
           class="absolute left-0 top-1/2 z-30 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#6D28D9] shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl disabled:opacity-50 lg:h-16 lg:w-16"
           :disabled="isAnimating"
@@ -164,7 +137,7 @@ const visibleVehicles = computed(() => {
           <div :key="currentIndex" class="mx-auto grid max-w-[1120px] grid-cols-1 gap-8 lg:grid-cols-3">
             <article
               v-for="vehicle in visibleVehicles"
-              :key="vehicle.name + vehicle.tag + vehicle.range"
+              :key="vehicle.id"
               class="rounded-[24px] bg-white p-5 shadow-[0_20px_60px_rgba(15,23,42,0.12)] transition duration-300 hover:-translate-y-2 lg:min-h-[520px] lg:p-6"
             >
               <span class="rounded-full bg-[#EDE4FF] px-4 py-2 text-[12px] font-bold text-[#6D28D9]">
@@ -212,13 +185,13 @@ const visibleVehicles = computed(() => {
                 </div>
               </div>
 
-              <RouterLink
-                to="/vehicles"
+              <Link
+                :href="`/vehicles/${vehicle.slug}`"
                 class="mt-5 flex items-center justify-center gap-3 rounded-xl border border-[#6D28D9] bg-[#F3E8FF] px-5 py-3 font-bold text-[#6D28D9] transition hover:bg-[#EDE4FF] lg:mt-6"
               >
                 Vaata lähemalt
                 <ArrowRight :size="18" />
-              </RouterLink>
+              </Link>
             </article>
           </div>
         </Transition>
@@ -230,6 +203,13 @@ const visibleVehicles = computed(() => {
         >
           <ArrowRight :size="28" />
         </button>
+      </div>
+
+      <div
+        v-else
+        class="mt-12 rounded-2xl bg-white p-8 text-center font-bold text-[#0F172A] shadow-[0_18px_50px_rgba(15,23,42,0.12)]"
+      >
+        Sõidukeid pole veel lisatud.
       </div>
 
       <div

@@ -1,4 +1,6 @@
 <script setup>
+import { Link } from "@inertiajs/vue3";
+
 import {
   Instagram,
   Facebook,
@@ -19,10 +21,9 @@ import {
       <div
         class="grid gap-10 px-7 py-10 lg:grid-cols-[1.2fr_0.8fr_0.8fr_1fr] lg:px-12 lg:py-12"
       >
-        <!-- Brand -->
         <div>
           <img
-            src="/images/brand/Velo-logo.svg"
+            :src="'/images/brand/velo-logo.svg'"
             alt="Velo"
             width="180"
             height="56"
@@ -49,36 +50,34 @@ import {
           </div>
         </div>
 
-        <!-- Navigation -->
         <div>
           <h2 class="footer-title">
             Navigatsioon
           </h2>
 
           <nav class="mt-5 flex flex-col gap-3" aria-label="Jaluse navigatsioon">
-            <RouterLink to="/vehicles" class="footer-link">
+            <Link href="/vehicles" class="footer-link">
               Sõidukid
-            </RouterLink>
+            </Link>
 
-            <RouterLink to="/mission" class="footer-link">
+            <Link href="/mission" class="footer-link">
               Meist
-            </RouterLink>
+            </Link>
 
-            <RouterLink to="/news" class="footer-link">
+            <Link href="/news" class="footer-link">
               Uudised
-            </RouterLink>
+            </Link>
 
-            <RouterLink to="/#offers" class="footer-link">
+            <Link href="/#offers" class="footer-link">
               Kampaaniad
-            </RouterLink>
+            </Link>
 
-            <RouterLink to="/contact" class="footer-link">
+            <Link href="/contact" class="footer-link">
               Kontakt
-            </RouterLink>
+            </Link>
           </nav>
         </div>
 
-        <!-- Contact -->
         <div>
           <h2 class="footer-title">
             Kontakt
@@ -111,7 +110,6 @@ import {
           </div>
         </div>
 
-        <!-- CTA -->
         <div>
           <h2 class="footer-title">
             Rendi Velo juba täna
@@ -127,17 +125,16 @@ import {
             <span>E-R 09:00 - 19:00</span>
           </div>
 
-          <RouterLink
-            to="/vehicles"
+          <Link
+            href="/vehicles"
             class="mt-6 inline-flex h-[46px] items-center justify-center gap-3 rounded-xl bg-white px-6 text-sm font-extrabold text-[#5B21B6] shadow-lg transition hover:scale-105"
           >
             Vaata sõidukeid
             <ArrowRight :size="18" aria-hidden="true" />
-          </RouterLink>
+          </Link>
         </div>
       </div>
 
-      <!-- Bottom -->
       <div class="border-t border-white/30 px-7 py-6 lg:px-12">
         <div
           class="flex flex-col items-center gap-4 text-sm text-white/90 lg:flex-row lg:items-center lg:justify-between"

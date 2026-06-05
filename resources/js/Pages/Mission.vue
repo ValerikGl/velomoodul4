@@ -1,5 +1,9 @@
 <script setup>
 import { Shield, Zap, Heart, Leaf, ArrowRight } from "lucide-vue-next";
+import MainLayout from "../Layouts/MainLayout.vue";
+defineOptions({
+  layout: MainLayout,
+});
 
 const values = [
   {
@@ -67,7 +71,7 @@ const stats = [
 
         <div class="relative flex justify-center">
           <img
-            src="/images/about/about-mascot.webp"
+            :src="'/images/about/about-mascot.webp'"
             alt="Velo maskott"
             class="relative z-10 w-full max-w-[420px] object-contain"
           />
@@ -102,7 +106,7 @@ const stats = [
           class="flex min-h-[300px] items-center justify-center rounded-3xl bg-[#EDE4FF] p-10"
         >
           <img
-            src="/images/brand/Velo-logo.svg"
+            :src="'/images/brand/velo-logo.svg'"
             alt="Velo logo"
             class="w-full max-w-[400px]"
           />

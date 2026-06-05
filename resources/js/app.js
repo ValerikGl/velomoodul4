@@ -2,6 +2,7 @@ import '../css/app.css';
 
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
+import reveal from './directives/reveal';
 
 createInertiaApp({
     resolve: name => {
@@ -9,8 +10,10 @@ createInertiaApp({
         return pages[`./Pages/${name}.vue`];
     },
     setup({ el, App, props, plugin }) {
-        createApp({ render: () => h(App, props) })
-            .use(plugin)
-            .mount(el);
+        const vueApp = createApp({ render: () => h(App, props) });
+
+        vueApp.use(plugin);
+        vueApp.directive('reveal', reveal);
+        vueApp.mount(el);
     },
 });

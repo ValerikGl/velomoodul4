@@ -1,6 +1,6 @@
 <script setup>
-import { computed, ref, watch } from "vue";
-import { RouterLink, useRoute } from "vue-router";
+import { computed, ref, watch, onMounted, onUnmounted, nextTick } from "vue";
+import { Link } from "@inertiajs/vue3";
 import {
   ArrowRight,
   Star,
@@ -13,14 +13,132 @@ import {
   Clock,
   CheckCircle,
 } from "lucide-vue-next";
-import { onMounted, onUnmounted, nextTick } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import MainLayout from "../../Layouts/MainLayout.vue";
+defineOptions({
+  layout: MainLayout,
+});
+
+const props = defineProps({
+  vehicle: {
+    type: Object,
+    required: true,
+  },
+});
 
 let map = null;
 
+const imageUrl = (path) => {
+  if (!path) {
+    return "/images/vehicles/velo-lite.webp";
+  }
+
+  if (path.startsWith("/")) {
+    return path;
+  }
+
+  return `/storage/${path}`;
+};
+
+const galleryImages = computed(() => {
+  const images = [];
+
+  if (props.vehicle.image) {
+    images.push(imageUrl(props.vehicle.image));
+  }
+
+  if (Array.isArray(props.vehicle.images)) {
+    props.vehicle.images.forEach((image) => {
+      if (image.path) {
+        images.push(imageUrl(image.path));
+      }
+    });
+  }
+
+  return images.length ? images : ["/images/vehicles/velo-lite.webp"];
+});
+
+const activeImage = ref(galleryImages.value[0]);
+
+watch(
+  galleryImages,
+  (images) => {
+    activeImage.value = images[0];
+  },
+  { immediate: true },
+);
+
+const typeLabel = computed(() => {
+  const labels = {
+    scooter: "Elektritõukeratas",
+    bike: "Elektrijalgratas",
+    moped: "Elektrimopeed",
+  };
+
+  return labels[props.vehicle.type] || props.vehicle.type || "Sõiduk";
+});
+
+const price = computed(() => {
+  const value = Number(props.vehicle.price_per_hour || 0);
+
+  return `${value.toFixed(2)}€`;
+});
+
+const specs = computed(() => [
+  {
+    icon: Gauge,
+    label: "Tippkiirus",
+    value: props.vehicle.speed_kmh
+      ? `${props.vehicle.speed_kmh} km/h`
+      : "25 km/h",
+  },
+  {
+    icon: MapPin,
+    label: "Sõiduulatus",
+    value: props.vehicle.range_km
+      ? `${props.vehicle.range_km} km`
+      : "—",
+  },
+  {
+    icon: BatteryCharging,
+    label: "Aku",
+    value: props.vehicle.battery || "—",
+  },
+  {
+    icon: Weight,
+    label: "Kaal",
+    value: "—",
+  },
+  {
+    icon: Clock,
+    label: "Laadimisaeg",
+    value: "—",
+  },
+  {
+    icon: MapPin,
+    label: "Asukoht",
+    value: props.vehicle.location || "Tallinn",
+  },
+]);
+
+const benefits = computed(() => [
+  "Kerge ja vastupidav konstruktsioon",
+  `Kuni ${props.vehicle.range_km || "—"} km sõiduulatust ühe laadimisega`,
+  "Võimas elektrimootor sujuvaks kiirenduseks",
+  "Turvaline pidurisüsteem linnaliikluseks",
+  "Integreeritud esi- ja tagatuled",
+  "GPS-jälgimine ja nutikas lukustussüsteem",
+]);
+
 onMounted(async () => {
   await nextTick();
+
+  const mapElement = document.getElementById("vehicle-map");
+
+  if (!mapElement) {
+    return;
+  }
 
   map = L.map("vehicle-map", {
     zoomControl: false,
@@ -33,10 +151,10 @@ onMounted(async () => {
   const veloIcon = L.divIcon({
     className: "velo-map-marker",
     html: `
-    <div class="velo-marker">
-      <div class="velo-marker-dot"></div>
-    </div>
-  `,
+      <div class="velo-marker">
+        <div class="velo-marker-dot"></div>
+      </div>
+    `,
     iconSize: [46, 46],
     iconAnchor: [23, 46],
     popupAnchor: [0, -42],
@@ -44,7 +162,7 @@ onMounted(async () => {
 
   L.marker([59.437, 24.7536], { icon: veloIcon })
     .addTo(map)
-    .bindPopup("Tallinna Velo punkt<br>Narva mnt 5")
+    .bindPopup(`${props.vehicle.location || "Tallinna Velo punkt"}<br>Narva mnt 5`)
     .openPopup();
 });
 
@@ -54,198 +172,6 @@ onUnmounted(() => {
     map = null;
   }
 });
-
-const route = useRoute();
-
-const vehicles = [
-  {
-    slug: "velo-lite",
-    tag: "POPULAARNE",
-    name: "Velo Lite",
-    subtitle: "Kerge elektritõukeratas",
-    desc: "Kerge elektritõukeratas lühikesteks linnasõitudeks.",
-    longDesc:
-      "Velo Lite on kerge ja mugav elektritõukeratas, mis sobib ideaalselt lühikesteks linnasõitudeks.",
-    price: "2.00€",
-    speed: "20 km/h",
-    range: "30 km",
-    battery: "420 wh",
-    weight: "14 kg",
-    charge: "3 h",
-    gps: "Jah",
-    image: "/images/vehicles/velo-lite.webp",
-    images: [
-      "/images/vehicles/velo-lite.webp",
-      "/images/vehicles/velo-lite-detail-1.webp",
-      "/images/vehicles/velo-lite-detail-2.webp",
-    ],
-  },
-  {
-    slug: "velo-ride",
-    tag: "UUS",
-    name: "Velo Ride",
-    subtitle: "Elektrimopeed",
-    desc: "Elektrimopeed mugavaks liikumiseks pikematel marsruutidel.",
-    longDesc:
-      "Velo Ride on mugav elektrimopeed pikemateks linnasõitudeks ja igapäevaseks kasutamiseks.",
-    price: "6.00€",
-    speed: "45 km/h",
-    range: "80 km",
-    battery: "760 wh",
-    weight: "38 kg",
-    charge: "5 h",
-    gps: "Jah",
-    image: "/images/vehicles/velo-ride.webp",
-    images: [
-      "/images/vehicles/velo-ride.webp",
-      "/images/vehicles/velo-ride-detail-1.webp",
-      "/images/vehicles/velo-ride-detail-2.webp",
-    ],
-  },
-  {
-    slug: "velo-urban",
-    tag: "PREEMIUM",
-    name: "Velo Urban",
-    subtitle: "Premium elektrijalgratas",
-    desc: "Premium elektrijalgratas aktiivseks linnakasutuseks.",
-    longDesc:
-      "Velo Urban on kaasaegne premium elektrijalgratas, mis on loodud mugavaks ja jätkusuutlikuks linnaliikluseks.",
-    price: "4.50€",
-    speed: "25 km/h",
-    range: "75 km",
-    battery: "630 wh",
-    weight: "20 kg",
-    charge: "4 h",
-    gps: "Jah",
-    image: "/images/vehicles/velo-urban.webp",
-    images: [
-      "/images/vehicles/velo-urban.webp",
-      "/images/vehicles/velo-urban-detail-1.webp",
-      "/images/vehicles/velo-urban-detail-2.webp",
-    ],
-  },
-  {
-    slug: "velo-pro",
-    tag: "PRO",
-    name: "Velo Pro",
-    subtitle: "Võimsam elektritõukeratas",
-    desc: "Võimsam elektritõukeratas suurema sõiduulatusega.",
-    longDesc:
-      "Velo Pro sobib kasutajale, kes soovib rohkem jõudu, paremat sõiduulatust ja kindlat linnaliiklust.",
-    price: "3.00€",
-    speed: "25 km/h",
-    range: "50 km",
-    battery: "520 wh",
-    weight: "18 kg",
-    charge: "4 h",
-    gps: "Jah",
-    image: "/images/vehicles/velo-pro.webp",
-    images: [
-      "/images/vehicles/velo-pro.webp",
-      "/images/vehicles/velo-pro-detail-1.webp",
-      "/images/vehicles/velo-pro-detail-2.webp",
-    ],
-  },
-  {
-    slug: "velo-cruise",
-    tag: "COMFORT",
-    name: "Velo Cruise",
-    subtitle: "Mugav istmega elektrisõiduk",
-    desc: "Mugav istmega elektrisõiduk igapäevaseks kasutamiseks.",
-    longDesc:
-      "Velo Cruise on mugav valik pikemateks sõitudeks, pakkudes stabiilsust ja rahulikku sõidukogemust.",
-    price: "5.00€",
-    speed: "35 km/h",
-    range: "70 km",
-    battery: "690 wh",
-    weight: "32 kg",
-    charge: "5 h",
-    gps: "Jah",
-    image: "/images/vehicles/velo-cruise.webp",
-    images: [
-      "/images/vehicles/velo-cruise.webp",
-      "/images/vehicles/velo-cruise-detail-1.webp",
-      "/images/vehicles/velo-cruise-detail-2.webp",
-    ],
-  },
-  {
-    slug: "velo-city",
-    tag: "ECO",
-    name: "Velo City",
-    subtitle: "Praktiline elektrijalgratas",
-    desc: "Praktiline elektrijalgratas tööle ja kooli sõitmiseks.",
-    longDesc:
-      "Velo City on praktiline ja säästlik elektrijalgratas igapäevaseks liikumiseks linnas.",
-    price: "2.00€",
-    speed: "25 km/h",
-    range: "60 km",
-    battery: "560 wh",
-    weight: "19 kg",
-    charge: "4 h",
-    gps: "Jah",
-    image: "/images/vehicles/velo-city.webp",
-    images: [
-      "/images/vehicles/velo-city.webp",
-      "/images/vehicles/velo-city-detail-1.webp",
-      "/images/vehicles/velo-city-detail-2.webp",
-    ],
-  },
-];
-
-const vehicle = computed(() => {
-  return vehicles.find((item) => item.slug === route.params.id) || vehicles[0];
-});
-
-const activeImage = ref(vehicle.value.images[0]);
-
-watch(
-  () => route.params.id,
-  () => {
-    activeImage.value = vehicle.value.images[0];
-  },
-);
-
-const specs = computed(() => [
-  {
-    icon: Gauge,
-    label: "Tippkiirus",
-    value: vehicle.value.speed,
-  },
-  {
-    icon: MapPin,
-    label: "Sõiduulatus",
-    value: vehicle.value.range,
-  },
-  {
-    icon: BatteryCharging,
-    label: "Aku",
-    value: vehicle.value.battery,
-  },
-  {
-    icon: Weight,
-    label: "Kaal",
-    value: vehicle.value.weight,
-  },
-  {
-    icon: Clock,
-    label: "Laadimisaeg",
-    value: vehicle.value.charge,
-  },
-  {
-    icon: MapPin,
-    label: "GPS",
-    value: vehicle.value.gps,
-  },
-]);
-
-const benefits = computed(() => [
-  "Kerge ja vastupidav konstruktsioon",
-  `Kuni ${vehicle.value.range} sõiduulatust ühe laadimisega`,
-  "Võimas elektrimootor sujuvaks kiirenduseks",
-  "Turvaline pidurisüsteem linnaliikluseks",
-  "Integreeritud esi- ja tagatuled",
-  "GPS-jälgimine ja nutikas lukustussüsteem",
-]);
 </script>
 
 <template>
@@ -254,13 +180,13 @@ const benefits = computed(() => [
       <div
         class="mb-8 flex items-center gap-4 text-sm font-bold text-[#0F172A]"
       >
-        <RouterLink to="/" class="hover:text-[#6D28D9]"> Avaleht </RouterLink>
+        <Link href="/" class="hover:text-[#6D28D9]">Avaleht</Link>
 
         <ArrowRight :size="16" />
 
-        <RouterLink to="/vehicles" class="hover:text-[#6D28D9]">
+        <Link href="/vehicles" class="hover:text-[#6D28D9]">
           Sõidukid
-        </RouterLink>
+        </Link>
 
         <ArrowRight :size="16" />
 
@@ -285,9 +211,12 @@ const benefits = computed(() => [
             </Transition>
           </div>
 
-          <div class="mt-8 grid grid-cols-3 gap-5">
+          <div
+            v-if="galleryImages.length > 1"
+            class="mt-8 grid grid-cols-3 gap-5"
+          >
             <button
-              v-for="image in vehicle.images"
+              v-for="image in galleryImages"
               :key="image"
               class="rounded-xl border-2 bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,0.08)] transition hover:-translate-y-1"
               :class="
@@ -311,7 +240,7 @@ const benefits = computed(() => [
             <span
               class="rounded-full bg-[#EDE4FF] px-4 py-2 text-[12px] font-extrabold text-[#6D28D9]"
             >
-              {{ vehicle.tag }}
+              {{ typeLabel }}
             </span>
 
             <span
@@ -328,7 +257,7 @@ const benefits = computed(() => [
           </h1>
 
           <p class="mt-3 text-[22px] font-semibold text-[#0F172A]">
-            {{ vehicle.subtitle }}
+            {{ typeLabel }}
           </p>
 
           <div class="mt-7 flex items-center gap-2 font-bold text-[#0F172A]">
@@ -339,7 +268,7 @@ const benefits = computed(() => [
           <p
             class="mt-7 max-w-[520px] text-[17px] font-semibold leading-relaxed text-slate-700"
           >
-            {{ vehicle.desc }}
+            {{ vehicle.description }}
           </p>
 
           <div class="my-8 h-px max-w-[520px] bg-[#DDD0FF]"></div>
@@ -348,7 +277,7 @@ const benefits = computed(() => [
 
           <div class="mt-2 flex items-end gap-1">
             <span class="text-[42px] font-extrabold text-[#6D28D9]">
-              {{ vehicle.price }}
+              {{ price }}
             </span>
             <span class="pb-2 text-[18px] font-extrabold text-[#0F172A]">
               /h
@@ -356,13 +285,13 @@ const benefits = computed(() => [
           </div>
 
           <div class="mt-6 flex items-center gap-4">
-            <RouterLink
-              :to="`/booking/${vehicle.slug}`"
+            <Link
+              href="/contact"
               class="inline-flex items-center gap-3 rounded-xl bg-[#6D28D9] px-7 py-4 font-bold text-white shadow-lg transition hover:scale-105 hover:bg-[#5B21B6] active:scale-95"
             >
               <Calendar :size="20" />
               Broneeri Kohe
-            </RouterLink>
+            </Link>
 
             <button
               class="flex h-14 w-14 items-center justify-center rounded-full bg-white text-[#6D28D9] shadow-xl transition hover:scale-110"
@@ -412,7 +341,7 @@ const benefits = computed(() => [
           <p
             class="mt-6 text-[15px] font-semibold leading-relaxed text-[#0F172A]"
           >
-            {{ vehicle.longDesc }}
+            {{ vehicle.description }}
           </p>
 
           <p
@@ -449,7 +378,7 @@ const benefits = computed(() => [
             <h2 class="text-[24px] font-extrabold text-[#0F172A]">Saadavus</h2>
 
             <p class="mt-4 font-extrabold text-[#6D28D9]">
-              Tallinna Velo punkt
+              {{ vehicle.location || "Tallinna Velo punkt" }}
             </p>
 
             <p class="mt-2 font-bold text-[#0F172A]">Narva mnt 5</p>

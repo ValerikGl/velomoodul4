@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink } from "vue-router";
+import { Link } from "@inertiajs/vue3";
 import { Zap, Leaf, Shield, User, Bike } from "lucide-vue-next";
 </script>
 
@@ -27,19 +27,19 @@ import { Zap, Leaf, Shield, User, Bike } from "lucide-vue-next";
         </p>
 
         <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-          <RouterLink
+          <Link
             to="/booking"
             class="rounded-xl bg-[#6D28D9] px-7 py-3.5 text-center text-[15px] font-bold text-white shadow-md transition hover:bg-[#5B21B6]"
           >
             Rendi nüüd
-          </RouterLink>
+          </Link>
 
-          <RouterLink
+          <Link
             to="/vehicles"
             class="rounded-xl border border-[#6D28D9] px-7 py-3.5 text-center text-[15px] font-bold text-[#6D28D9] transition hover:bg-violet-50"
           >
             Vaata sõidukeid
-          </RouterLink>
+          </Link>
         </div>
 
         <!-- FEATURES DESKTOP -->
@@ -148,7 +148,7 @@ import { Zap, Leaf, Shield, User, Bike } from "lucide-vue-next";
       <!-- RIGHT DESKTOP -->
       <div class="relative hidden h-[520px] lg:block">
         <img
-          src="/images/home/hero-scooter.webp"
+          :src="'/images/home/hero-scooter.webp'"
           alt="Velo elektritõukeratas linnas"
           class="absolute right-0 top-0 h-[500px] w-[560px] rounded-2xl object-cover object-[85%_center] shadow-xl"
         />

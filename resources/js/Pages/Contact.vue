@@ -3,6 +3,10 @@ import { onMounted, onUnmounted, nextTick } from "vue";
 import { MapPin, Phone, Mail, Send } from "lucide-vue-next";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import MainLayout from "../Layouts/MainLayout.vue";
+defineOptions({
+  layout: MainLayout,
+});
 
 let contactMap = null;
 
@@ -67,7 +71,7 @@ onUnmounted(() => {
 
         <div class="relative flex justify-center">
           <img
-            src="/images/contact/contact-hero.webp"
+            :src="'/images/contact/contact-hero.webp'"
             alt="Velo contact"
             class="w-full max-w-[560px] object-contain"
           />

@@ -1,5 +1,9 @@
 <script setup>
 import { ArrowRight, Calendar, Clock } from "lucide-vue-next";
+import MainLayout from "../Layouts/MainLayout.vue";
+defineOptions({
+  layout: MainLayout,
+});
 
 const featuredPost = {
   date: "05.06.2026",
