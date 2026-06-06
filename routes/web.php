@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Vehicle;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Models\BlogPost;
 
 Route::get('/', function () {
     return Inertia::render('Home', [
@@ -13,6 +14,12 @@ Route::get('/', function () {
             ->where('is_active', true)
             ->latest()
             ->take(6)
+            ->get(),
+
+        'posts' => BlogPost::query()
+            ->where('is_published', true)
+            ->latest('published_at')
+            ->take(5)
             ->get(),
     ]);
 })->name('home');
@@ -41,5 +48,21 @@ Route::get('/contact', [ContactController::class, 'create'])
 Route::post('/contact', [ContactController::class, 'store'])
     ->name('contact.store');
 
-Route::get('/news', fn () => Inertia::render('News'))->name('news');
-Route::get('/mission', fn () => Inertia::render('Mission'))->name('mission');
+Route::get('/mission', fn() => Inertia::render('Mission'))->name('mission');
+
+Route::get('/news', function () {
+    return Inertia::render('News', [
+        'posts' => BlogPost::query()
+            ->where('is_published', true)
+            ->latest('published_at')
+            ->get(),
+    ]);
+})->name('news');
+
+Route::get('/news/{blogPost:slug}', function (BlogPost $blogPost) {
+    abort_unless($blogPost->is_published, 404);
+
+    return Inertia::render('NewsShow', [
+        'post' => $blogPost,
+    ]);
+})->name('news.show');
