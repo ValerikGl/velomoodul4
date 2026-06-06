@@ -28,14 +28,14 @@ import { Zap, Leaf, Shield, User, Bike } from "lucide-vue-next";
 
         <div class="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link
-            to="/booking"
+            href="/vehicles"
             class="rounded-xl bg-[#6D28D9] px-7 py-3.5 text-center text-[15px] font-bold text-white shadow-md transition hover:bg-[#5B21B6]"
           >
             Rendi nüüd
           </Link>
 
           <Link
-            to="/vehicles"
+            href="/vehicles"
             class="rounded-xl border border-[#6D28D9] px-7 py-3.5 text-center text-[15px] font-bold text-[#6D28D9] transition hover:bg-violet-50"
           >
             Vaata sõidukeid
