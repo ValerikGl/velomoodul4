@@ -1,12 +1,29 @@
 <script setup>
 import { onMounted, onUnmounted, nextTick } from "vue";
+import { useForm, usePage } from "@inertiajs/vue3";
 import { MapPin, Phone, Mail, Send } from "lucide-vue-next";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import MainLayout from "../Layouts/MainLayout.vue";
+
 defineOptions({
   layout: MainLayout,
 });
+
+const page = usePage();
+
+const form = useForm({
+  name: "",
+  email: "",
+  message: "",
+});
+
+const submit = () => {
+  form.post("/contact", {
+    preserveScroll: true,
+    onSuccess: () => form.reset(),
+  });
+};
 
 let contactMap = null;
 
@@ -51,7 +68,6 @@ onUnmounted(() => {
 <template>
   <main class="bg-[#F8FAFC] px-5 py-12 sm:px-6 lg:py-16">
     <div class="mx-auto max-w-[1280px]">
-      <!-- HERO -->
       <section v-reveal class="grid items-center gap-10 lg:grid-cols-[1fr_1fr]">
         <div>
           <h1
@@ -78,7 +94,6 @@ onUnmounted(() => {
         </div>
       </section>
 
-      <!-- CONTACT CARDS -->
       <section v-reveal class="mt-14 grid gap-6 md:grid-cols-3">
         <article
           class="flex items-center gap-5 rounded-2xl bg-white p-6 shadow-[0_18px_45px_rgba(15,23,42,0.10)]"
@@ -140,52 +155,71 @@ onUnmounted(() => {
         </article>
       </section>
 
-      <!-- FORM + MAP -->
       <section
         v-reveal
         class="mt-12 grid gap-8 rounded-3xl bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.10)] lg:grid-cols-[340px_1fr] lg:p-8"
       >
-        <form class="flex flex-col">
+        <form class="flex flex-col" @submit.prevent="submit">
           <h2 class="text-[24px] font-extrabold text-[#0F172A]">
             Saada meile sõnum
           </h2>
 
+          <div
+            v-if="page.props.flash?.success"
+            class="mt-5 rounded-xl bg-green-100 px-4 py-3 text-sm font-bold text-green-700"
+          >
+            {{ page.props.flash.success }}
+          </div>
+
           <label class="mt-7">
             <span class="text-sm font-extrabold text-[#0F172A]">Nimi</span>
             <input
+              v-model="form.name"
               type="text"
               placeholder="Sinu nimi"
               class="mt-2 h-[46px] w-full rounded-lg border border-[#CBD5E1] bg-white px-4 text-sm font-semibold outline-none transition focus:border-[#6D28D9]"
             />
+            <p v-if="form.errors.name" class="mt-1 text-sm font-bold text-red-600">
+              {{ form.errors.name }}
+            </p>
           </label>
 
           <label class="mt-4">
             <span class="text-sm font-extrabold text-[#0F172A]">E-post</span>
             <input
+              v-model="form.email"
               type="email"
               placeholder="Sinu e-posti aadress"
               class="mt-2 h-[46px] w-full rounded-lg border border-[#CBD5E1] bg-white px-4 text-sm font-semibold outline-none transition focus:border-[#6D28D9]"
             />
+            <p v-if="form.errors.email" class="mt-1 text-sm font-bold text-red-600">
+              {{ form.errors.email }}
+            </p>
           </label>
 
           <label class="mt-4">
             <span class="text-sm font-extrabold text-[#0F172A]">Sõnum</span>
             <textarea
+              v-model="form.message"
               placeholder="Sinu sõnum"
               class="mt-2 h-[150px] w-full resize-none rounded-lg border border-[#CBD5E1] bg-white px-4 py-3 text-sm font-semibold outline-none transition focus:border-[#6D28D9]"
             ></textarea>
+            <p v-if="form.errors.message" class="mt-1 text-sm font-bold text-red-600">
+              {{ form.errors.message }}
+            </p>
           </label>
 
           <button
-            type="button"
-            class="mt-6 flex h-[46px] items-center justify-center gap-3 rounded-lg bg-[#6D28D9] text-sm font-bold text-white shadow-lg transition hover:bg-[#5B21B6]"
+            type="submit"
+            :disabled="form.processing"
+            class="mt-6 flex h-[46px] items-center justify-center gap-3 rounded-lg bg-[#6D28D9] text-sm font-bold text-white shadow-lg transition hover:bg-[#5B21B6] disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Send :size="18" />
-            Saada sõnum
+            {{ form.processing ? "Saadan..." : "Saada sõnum" }}
           </button>
         </form>
 
-        <div class="relative overflow-hidden rounded-2xl h-full min-h-[520px]">
+        <div class="relative h-full min-h-[520px] overflow-hidden rounded-2xl">
           <div id="contact-map" class="brand-map absolute inset-0"></div>
         </div>
       </section>
