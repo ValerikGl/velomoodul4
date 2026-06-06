@@ -1,58 +1,223 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🚲 Velo – Electric Vehicle Rental Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern electric vehicle rental platform built with Laravel, Vue.js, Inertia.js and Filament.
 
-## About Laravel
+## 🌐 Live Demo
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Website:** https://eksam.eu
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Admin Panel:** https://eksam.eu/admin
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 📋 Project Overview
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Velo is a web application that allows users to browse electric vehicles, make bookings, read company news and contact the company through a contact form.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Administrators can manage vehicles, bookings, blog posts, promotional banners and contact messages through a modern Filament administration panel.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## ✨ Features
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Public Website
+
+* Responsive modern design
+* Homepage with dynamic content
+* Vehicle catalogue
+* Vehicle detail pages
+* Online booking system
+* Blog & news section
+* Promotional banners
+* Contact form
+* Mobile-friendly layout
+
+### Admin Panel
+
+* Secure authentication
+* Vehicle management (CRUD)
+* Booking management (CRUD)
+* Blog management (CRUD)
+* Promotional banner management (CRUD)
+* Contact message management
+* Dashboard statistics
+* Image uploads
+
+---
+
+## 🛠 Technologies
+
+### Backend
+
+* Laravel 12
+* PHP 8.4
+* SQLite
+* Filament 4
+
+### Frontend
+
+* Vue 3
+* Inertia.js
+* Tailwind CSS
+* Vite
+* Lucide Icons
+
+### Infrastructure
+
+* Ubuntu VPS
+* Nginx
+* SSL (HTTPS)
+* GitHub
+
+---
+
+## 🔒 Security
+
+The project implements:
+
+* Password hashing
+* Request validation
+* CSRF protection
+* Environment variables (.env)
+* Secure authentication
+* Protected admin panel
+
+---
+
+## 🗄 Database Structure
+
+Main entities:
+
+### Vehicles
+
+Stores rental vehicle information.
+
+### Bookings
+
+Stores customer reservations.
+
+### Blog Posts
+
+Stores news and blog content.
+
+### Offer Banners
+
+Stores homepage promotional banners.
+
+### Contact Messages
+
+Stores messages submitted through the contact form.
+
+### Users
+
+Stores administrator accounts.
+
+---
+
+## 🚀 Installation
+
+### Clone Repository
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/ValerikGl/velomoodul4.git
+cd velomoodul4
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### Install Dependencies
 
-## Contributing
+```bash
+composer install
+npm install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Environment Configuration
 
-## Code of Conduct
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Database Setup
 
-## Security Vulnerabilities
+```bash
+touch database/database.sqlite
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Configure:
 
-## License
+```env
+DB_CONNECTION=sqlite
+DB_DATABASE=database/database.sqlite
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Run migrations:
+
+```bash
+php artisan migrate
+```
+
+### Storage Link
+
+```bash
+php artisan storage:link
+```
+
+### Build Frontend
+
+```bash
+npm run build
+```
+
+### Start Development Server
+
+```bash
+php artisan serve
+```
+
+---
+
+## 👤 Admin Access
+
+Create administrator account:
+
+```bash
+php artisan make:filament-user
+```
+
+Admin panel:
+
+```text
+/admin
+```
+
+---
+
+
+## 📚 Learning Outcomes
+
+This project demonstrates:
+
+* Laravel MVC architecture
+* Database design and migrations
+* Authentication and authorization
+* CRUD operations
+* Vue.js component architecture
+* Inertia.js SPA workflow
+* File uploads
+* Deployment on VPS
+* Git version control
+
+---
+
+## 👨‍💻 Author
+
+**Valeri Gladunik**
+
+GitHub:
+https://github.com/ValerikGl
+
+---
+
+## 📄 License
+
+Educational project created for vocational school examination purposes.
