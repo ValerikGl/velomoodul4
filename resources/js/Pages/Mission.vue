@@ -1,6 +1,7 @@
 <script setup>
 import { Shield, Zap, Heart, Leaf, ArrowRight } from "lucide-vue-next";
 import MainLayout from "../Layouts/MainLayout.vue";
+import { Link } from "@inertiajs/vue3";
 defineOptions({
   layout: MainLayout,
 });
@@ -193,13 +194,13 @@ const stats = [
             </p>
           </div>
 
-          <RouterLink
-            to="/vehicles"
+          <Link
+            href="/vehicles"
             class="inline-flex h-[48px] items-center justify-center gap-3 rounded-xl bg-white px-7 text-sm font-extrabold text-[#6D28D9] transition hover:scale-105"
           >
             Vaata sõidukeid
             <ArrowRight :size="18" />
-          </RouterLink>
+          </Link>
         </div>
       </section>
     </div>
