@@ -8,26 +8,31 @@ import AppSection from "../components/AppSection.vue";
 import MainLayout from "../Layouts/MainLayout.vue";
 
 defineOptions({
-  layout: MainLayout,
+    layout: MainLayout,
 });
 
 defineProps({
-  vehicles: {
-    type: Array,
-    default: () => [],
-  },
-  posts: {
-    type: Array,
-    default: () => [],
-  },
+    vehicles: {
+        type: Array,
+        default: () => [],
+    },
+    posts: {
+        type: Array,
+        default: () => [],
+    },
+
+    offers: {
+        type: Array,
+        default: () => [],
+    },
 });
 </script>
 
 <template>
-  <HeroSection v-reveal />
-  <MissionSection v-reveal />
-  <FeaturedVehiclesSection v-reveal :vehicles="vehicles" />
-  <BlogNewsSection v-reveal :posts="posts" />
-  <OffersSection v-reveal />
-  <AppSection v-reveal />
+    <HeroSection v-reveal />
+    <MissionSection v-reveal />
+    <FeaturedVehiclesSection v-reveal :vehicles="vehicles" />
+    <BlogNewsSection v-reveal :posts="posts" />
+    <OffersSection v-reveal :offers="offers" />
+    <AppSection v-reveal />
 </template>

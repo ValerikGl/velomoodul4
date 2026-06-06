@@ -7,6 +7,7 @@ use App\Models\Vehicle;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\BlogPost;
+use App\Models\OfferBanner;
 
 Route::get('/', function () {
     return Inertia::render('Home', [
@@ -20,6 +21,12 @@ Route::get('/', function () {
             ->where('is_published', true)
             ->latest('published_at')
             ->take(5)
+            ->get(),
+
+        'offers' => OfferBanner::query()
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->latest()
             ->get(),
     ]);
 })->name('home');
