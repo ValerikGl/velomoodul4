@@ -20,6 +20,9 @@ class OfferBannerForm
                     ->disk('public')
                     ->directory('offers')
                     ->visibility('public')
+                    ->imagePreviewHeight('180')
+                    ->downloadable()
+                    ->openable()
                     ->required(),
                 TextInput::make('link'),
                 TextInput::make('sort_order')
