@@ -1,0 +1,13 @@
+Oma projekti arendamiseks valisin Laraveli PHP raamistiku koos Vue.js, Inertia.js ja Filament Admin Panel lahendusega. Selle tehnoloogiate kombinatsiooni valisin seetõttu, et see võimaldab luua kaasaegseid veebirakendusi, kus on mugav nii kasutajaliides kui ka administraatoripaneel. Lisaks on Laravel üks populaarsemaid veebiarenduse raamistikke, millel on suur kogukond, hea dokumentatsioon ning palju valmis lahendusi.
+
+Laraveli suurimaks eeliseks on selge projektistruktuur ning suur hulk sisseehitatud funktsioone. Laravel pakub autentimist, andmebaasi migratsioone, valideerimist, failide haldamist ning turvalisusega seotud lahendusi. Tänu sellele oli võimalik keskenduda projekti funktsionaalsuse loomisele, mitte põhiliste süsteemide nullist arendamisele. Samuti muudab Laravel projekti hooldamise ja edasiarendamise lihtsamaks.
+
+Kasutajaliidese loomiseks kasutasin Vue.js raamistikku. Vue võimaldab luua dünaamilisi ja interaktiivseid kasutajaliideseid komponentide abil. Komponentidel põhinev ülesehitus muudab koodi korduvkasutatavaks ning lihtsustab suuremate projektide arendamist. Vue eeliseks on ka hea jõudlus ja sujuv kasutajakogemus, sest lehte ei pea iga tegevuse järel täielikult uuesti laadima.
+
+Vue ja Laraveli ühendamiseks kasutasin Inertia.js lahendust. Inertia võimaldab kasutada Vue komponentide eeliseid ilma eraldi REST API loomata. Kogu rakendus töötab ühe projektina, mis muudab arendamise lihtsamaks ja kiiremaks. See vähendab ka koodi hulka ning lihtsustab andmete edastamist serveri ja kasutajaliidese vahel.
+
+Administratsioonipaneeli loomiseks kasutasin Filament Admin Panel raamistikku. Filament võimaldas kiiresti luua professionaalse haldusliidese ilma suure hulga lisakoodi kirjutamata. Selle abil realiseerisin sõidukite, broneeringute, blogipostituste, pakkumiste ja kontaktivormide haldamise. Filamendi eeliseks on kaasaegne kasutajaliides, kiire arendus ning väga hea integratsioon Laraveliga. Lisaks toetab see failide üleslaadimist, tabelite haldamist, filtreid, statistika vidinaid ja kasutajate autentimist.
+
+Valitud tehnoloogiatel on ka mõningaid puudusi. Laravel, Vue ja Inertia nõuavad rohkem õppimist kui lihtsad PHP lahendused ning projekti seadistamine võib alguses olla keerulisem. Samuti lisab Vue kasutamine eraldi build-protsessi, mis muudab juurutamise veidi keerukamaks. Filamendi puhul võib puuduseks olla see, et väga spetsiifiliste lahenduste korral tuleb osa funktsionaalsusest ise kohandada või juurde arendada.
+
+Kokkuvõttes osutus Laraveli, Vue.js-i, Inertia.js-i ja Filamendi kombinatsioon minu projekti jaoks väga heaks valikuks. Need tehnoloogiad võimaldasid luua kaasaegse veebirakenduse koos mugava administraatoripaneeli, dünaamilise kasutajaliidese ning lihtsasti hallatava sisuhaldussüsteemiga.
