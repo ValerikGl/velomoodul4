@@ -16,6 +16,7 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import MainLayout from "../../Layouts/MainLayout.vue";
+
 defineOptions({
     layout: MainLayout,
 });
@@ -30,13 +31,8 @@ const props = defineProps({
 let map = null;
 
 const imageUrl = (path) => {
-    if (!path) {
-        return "/images/vehicles/velo-lite.webp";
-    }
-
-    if (path.startsWith("/")) {
-        return path;
-    }
+    if (!path) return "/images/vehicles/velo-lite.webp";
+    if (path.startsWith("/")) return path;
 
     return `/storage/${path}`;
 };
@@ -81,7 +77,6 @@ const typeLabel = computed(() => {
 
 const price = computed(() => {
     const value = Number(props.vehicle.price_per_hour || 0);
-
     return `${value.toFixed(2)}€`;
 });
 
@@ -91,7 +86,7 @@ const specs = computed(() => [
         label: "Tippkiirus",
         value: props.vehicle.speed_kmh
             ? `${props.vehicle.speed_kmh} km/h`
-            : "25 km/h",
+            : "—",
     },
     {
         icon: MapPin,
@@ -106,12 +101,12 @@ const specs = computed(() => [
     {
         icon: Weight,
         label: "Kaal",
-        value: "—",
+        value: props.vehicle.weight ? `${props.vehicle.weight} kg` : "—",
     },
     {
         icon: Clock,
         label: "Laadimisaeg",
-        value: "—",
+        value: props.vehicle.charging_time || "—",
     },
     {
         icon: MapPin,
@@ -120,23 +115,20 @@ const specs = computed(() => [
     },
 ]);
 
-const benefits = computed(() => [
-    "Kerge ja vastupidav konstruktsioon",
-    `Kuni ${props.vehicle.range_km || "—"} km sõiduulatust ühe laadimisega`,
-    "Võimas elektrimootor sujuvaks kiirenduseks",
-    "Turvaline pidurisüsteem linnaliikluseks",
-    "Integreeritud esi- ja tagatuled",
-    "GPS-jälgimine ja nutikas lukustussüsteem",
-]);
+const benefits = computed(() => {
+    if (Array.isArray(props.vehicle.features) && props.vehicle.features.length) {
+        return props.vehicle.features;
+    }
+
+    return [];
+});
 
 onMounted(async () => {
     await nextTick();
 
     const mapElement = document.getElementById("vehicle-map");
 
-    if (!mapElement) {
-        return;
-    }
+    if (!mapElement) return;
 
     map = L.map("vehicle-map", {
         zoomControl: false,
@@ -149,10 +141,10 @@ onMounted(async () => {
     const veloIcon = L.divIcon({
         className: "velo-map-marker",
         html: `
-      <div class="velo-marker">
-        <div class="velo-marker-dot"></div>
-      </div>
-    `,
+            <div class="velo-marker">
+                <div class="velo-marker-dot"></div>
+            </div>
+        `,
         iconSize: [46, 46],
         iconAnchor: [23, 46],
         popupAnchor: [0, -42],
@@ -177,19 +169,11 @@ onUnmounted(() => {
 <template>
     <main class="bg-[#F8FAFC] px-5 py-10 sm:px-6 lg:py-14">
         <div class="mx-auto max-w-[1280px]">
-            <div
-                class="mb-8 flex items-center gap-4 text-sm font-bold text-[#0F172A]"
-            >
+            <div class="mb-8 flex items-center gap-4 text-sm font-bold text-[#0F172A]">
                 <Link href="/" class="hover:text-[#6D28D9]">Avaleht</Link>
-
                 <ArrowRight :size="16" />
-
-                <Link href="/vehicles" class="hover:text-[#6D28D9]">
-                    Sõidukid
-                </Link>
-
+                <Link href="/vehicles" class="hover:text-[#6D28D9]">Sõidukid</Link>
                 <ArrowRight :size="16" />
-
                 <span class="text-[#6D28D9]">{{ vehicle.name }}</span>
             </div>
 
@@ -198,9 +182,7 @@ onUnmounted(() => {
                 class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center"
             >
                 <div>
-                    <div
-                        class="overflow-hidden rounded-3xl bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.10)]"
-                    >
+                    <div class="overflow-hidden rounded-3xl bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.10)]">
                         <Transition name="fade-image" mode="out-in">
                             <img
                                 :key="activeImage"
@@ -219,11 +201,7 @@ onUnmounted(() => {
                             v-for="image in galleryImages"
                             :key="image"
                             class="rounded-xl border-2 bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,0.08)] transition hover:-translate-y-1"
-                            :class="
-                                activeImage === image
-                                    ? 'border-[#6D28D9]'
-                                    : 'border-transparent'
-                            "
+                            :class="activeImage === image ? 'border-[#6D28D9]' : 'border-transparent'"
                             @click="activeImage = image"
                         >
                             <img
@@ -237,22 +215,16 @@ onUnmounted(() => {
 
                 <div>
                     <div class="mb-5 flex gap-3">
-                        <span
-                            class="rounded-full bg-[#EDE4FF] px-4 py-2 text-[12px] font-extrabold text-[#6D28D9]"
-                        >
+                        <span class="rounded-full bg-[#EDE4FF] px-4 py-2 text-[12px] font-extrabold text-[#6D28D9]">
                             {{ typeLabel }}
                         </span>
 
-                        <span
-                            class="rounded-full bg-green-100 px-4 py-2 text-[12px] font-extrabold text-green-600"
-                        >
+                        <span class="rounded-full bg-green-100 px-4 py-2 text-[12px] font-extrabold text-green-600">
                             Saadaval
                         </span>
                     </div>
 
-                    <h1
-                        class="text-[42px] font-extrabold leading-tight text-[#0F172A] lg:text-[56px]"
-                    >
+                    <h1 class="text-[42px] font-extrabold leading-tight text-[#0F172A] lg:text-[56px]">
                         {{ vehicle.name }}
                     </h1>
 
@@ -260,20 +232,13 @@ onUnmounted(() => {
                         {{ typeLabel }}
                     </p>
 
-                    <div
-                        class="mt-7 flex items-center gap-2 font-bold text-[#0F172A]"
-                    >
-                        <Star
-                            class="fill-yellow-400 text-yellow-400"
-                            :size="22"
-                        />
+                    <div class="mt-7 flex items-center gap-2 font-bold text-[#0F172A]">
+                        <Star class="fill-yellow-400 text-yellow-400" :size="22" />
                         <span>4.9 (324 arvustust)</span>
                     </div>
 
-                    <p
-                        class="mt-7 max-w-[520px] text-[17px] font-semibold leading-relaxed text-slate-700"
-                    >
-                        {{ vehicle.description }}
+                    <p class="mt-7 max-w-[520px] text-[17px] font-semibold leading-relaxed text-slate-700">
+                        {{ vehicle.description || "Kirjeldus puudub." }}
                     </p>
 
                     <div class="my-8 h-px max-w-[520px] bg-[#DDD0FF]"></div>
@@ -284,9 +249,7 @@ onUnmounted(() => {
                         <span class="text-[42px] font-extrabold text-[#6D28D9]">
                             {{ price }}
                         </span>
-                        <span
-                            class="pb-2 text-[18px] font-extrabold text-[#0F172A]"
-                        >
+                        <span class="pb-2 text-[18px] font-extrabold text-[#0F172A]">
                             /h
                         </span>
                     </div>
@@ -314,9 +277,7 @@ onUnmounted(() => {
                     Tehnilised andmed
                 </h2>
 
-                <div
-                    class="grid gap-5 rounded-3xl bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.10)] sm:grid-cols-2 lg:grid-cols-6"
-                >
+                <div class="grid gap-5 rounded-3xl bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.10)] sm:grid-cols-2 lg:grid-cols-6">
                     <div
                         v-for="spec in specs"
                         :key="spec.label"
@@ -340,53 +301,31 @@ onUnmounted(() => {
             </section>
 
             <section v-reveal class="mt-10 grid gap-8 lg:grid-cols-[380px_1fr]">
-                <article
-                    class="rounded-3xl bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.10)]"
-                >
+                <article class="rounded-3xl bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.10)]">
                     <h2 class="text-[24px] font-extrabold text-[#0F172A]">
                         Kirjeldus
                     </h2>
 
-                    <p
-                        class="mt-6 text-[15px] font-semibold leading-relaxed text-[#0F172A]"
-                    >
-                        {{ vehicle.description }}
+                    <p class="mt-6 whitespace-pre-line text-[15px] font-semibold leading-relaxed text-[#0F172A]">
+                        {{ vehicle.description || "Kirjeldus puudub." }}
                     </p>
 
-                    <p
-                        class="mt-5 text-[15px] font-semibold leading-relaxed text-[#0F172A]"
-                    >
-                        Elegantne disain, võimas aku ja kvaliteetsed komponendid
-                        tagavad sujuva sõidukogemuse nii igapäevasteks
-                        töölesõitudeks kui ka pikemateks linnaseiklusteks.
-                    </p>
-
-                    <ul class="mt-7 space-y-3">
+                    <ul v-if="benefits.length" class="mt-7 space-y-3">
                         <li
                             v-for="benefit in benefits"
                             :key="benefit"
                             class="flex items-start gap-3 text-sm font-semibold text-[#0F172A]"
                         >
-                            <CheckCircle
-                                class="mt-0.5 shrink-0 text-[#6D28D9]"
-                                :size="18"
-                            />
+                            <CheckCircle class="mt-0.5 shrink-0 text-[#6D28D9]" :size="18" />
                             <span>{{ benefit }}</span>
                         </li>
                     </ul>
                 </article>
 
-                <article
-                    class="relative overflow-hidden rounded-3xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.10)]"
-                >
-                    <div
-                        id="vehicle-map"
-                        class="h-full brand-map min-h-[420px] w-full"
-                    ></div>
+                <article class="relative overflow-hidden rounded-3xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.10)]">
+                    <div id="vehicle-map" class="h-full brand-map min-h-[420px] w-full"></div>
 
-                    <div
-                        class="pointer-events-none absolute left-0 top-0 z-[500] rounded-br-3xl bg-white p-8 shadow-[0_15px_40px_rgba(15,23,42,0.12)]"
-                    >
+                    <div class="pointer-events-none absolute left-0 top-0 z-[500] rounded-br-3xl bg-white p-8 shadow-[0_15px_40px_rgba(15,23,42,0.12)]">
                         <h2 class="text-[24px] font-extrabold text-[#0F172A]">
                             Saadavus
                         </h2>
@@ -395,7 +334,9 @@ onUnmounted(() => {
                             {{ vehicle.location || "Tallinna Velo punkt" }}
                         </p>
 
-                        <p class="mt-2 font-bold text-[#0F172A]">Narva mnt 5</p>
+                        <p class="mt-2 font-bold text-[#0F172A]">
+                            Narva mnt 5
+                        </p>
                     </div>
                 </article>
             </section>

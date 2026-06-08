@@ -9,6 +9,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TagsInput;
 
 class VehicleForm
 {
@@ -87,6 +88,19 @@ class VehicleForm
                 TextInput::make('speed_kmh')
                     ->label('Speed (km/h)')
                     ->numeric(),
+
+                TextInput::make('weight')
+                    ->label('Weight')
+                    ->numeric()
+                    ->suffix('kg'),
+
+                TextInput::make('charging_time')
+                    ->label('Charging time')
+                    ->placeholder('4-6 h'),
+
+                TagsInput::make('features')
+                    ->label('Features')
+                    ->placeholder('Add feature'),
 
                 Toggle::make('is_active')
                     ->default(true),

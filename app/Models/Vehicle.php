@@ -19,11 +19,15 @@ class Vehicle extends Model
         'location',
         'speed_kmh',
         'is_active',
+        'weight',
+        'charging_time',
+        'features',
     ];
 
     protected $casts = [
         'price_per_hour' => 'decimal:2',
         'is_active' => 'boolean',
+        'features' => 'array',
     ];
 
     public function images(): HasMany
